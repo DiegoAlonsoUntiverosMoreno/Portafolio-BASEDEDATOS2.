@@ -10,12 +10,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     
-    <link rel="stylesheet" href="style.css?v=2">
+    <link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
 
     <div id="login-overlay">
         <div id="particles-container"></div>
+        
         <div class="login-card">
             <div class="close-login" onclick="cerrarLoginModal()"><i class='bx bx-x'></i></div>
             <div class="login-avatar"><i class="fa-solid fa-database"></i></div>
@@ -98,9 +99,12 @@
                 <p>Bienvenido a mi portafolio del curso de Base de Datos 2. Aquí encontrarás todos mis diagramas, modelados y scripts avanzados en SQL Server.</p>
                 <button onclick="document.getElementById('proyectos').scrollIntoView();"><i class="fa-solid fa-folder-open"></i> Ver Trabajos</button>
             </div>
+            
             <div class="hero-logo-box autoBlur" data-aos="fade-left" data-aos-duration="1500">
                 <img class="hero-logo" src="images/logo_upla_sin_fondo_1_20240529_1151847739.png" alt="Logo Universidad Peruana Los Andes">
             </div>
+            
+            <div class="scroll-down"></div>
         </section>
 
         <section class="info-section" id="sobre-mi">
@@ -121,33 +125,231 @@
 
         <section class="skills-section" id="habilidades">
             <h1 class="section-title autoDisplay">Mis Habilidades Técnicas <i class="fa-solid fa-dumbbell"></i></h1>
+            
             <div class="skills-box autoDisplay">
                 <div class="skill-card">
                     <h1 class="gradient">Diseño de BD <i class="fa-solid fa-diagram-project"></i></h1>
-                    <p>Diseño modelos Entidad-Relación y relacionales, aplico reglas de normalización hasta la 3FN y utilizo herramientas de diagramado profesional.</p>  
+                    <p>Como estudiante de 5to ciclo, comprendo el ciclo de vida de una base de datos. Diseño modelos Entidad-Relación y relacionales, aplico reglas de normalización hasta la 3FN para evitar redundancias, y utilizo herramientas de diagramado para estructurar la información lógica antes de codificar.</p>  
                 </div>
                 <div class="skill-card">
                     <h1 class="gradient">Desarrollo SQL <i class="fa-solid fa-code"></i></h1>
-                    <p>Manejo de consultas T-SQL, restricciones (PK, FK), INNER JOINs complejos, subconsultas y procedimientos almacenados en SQL Server.</p>
+                    <p>Manejo de consultas T-SQL a nivel intermedio. Capacidad para crear tablas con restricciones (PK, FK, Check), realizar uniones de datos complejas mediante INNER y OUTER JOINs, uso de subconsultas, y desarrollo inicial de Vistas y Procedimientos Almacenados simples en SQL Server.</p>
+                </div>
+            </div>
+
+            <div class="slider autoBlur" style="--width: 80px; --height: 80px; --quantity: 9;">
+                <div class="list">
+                    <div class="item" style="--position: 1"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/microsoftsqlserver/microsoftsqlserver-plain.svg" alt="SQL Server" title="SQL Server"></div>
+                    <div class="item" style="--position: 2"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mysql/mysql-original.svg" alt="MySQL" title="MySQL"></div>
+                    <div class="item" style="--position: 3"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/postgresql/postgresql-original.svg" alt="PostgreSQL" title="PostgreSQL"></div>
+                    <div class="item" style="--position: 4"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/azure/azure-original.svg" alt="Azure" title="Microsoft Azure"></div>
+                    <div class="item" style="--position: 5"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg" alt="Java" title="Java"></div>
+                    <div class="item" style="--position: 6"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/html5/html5-original.svg" alt="HTML5" title="HTML5"></div>
+                    <div class="item" style="--position: 7"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/css3/css3-original.svg" alt="CSS3" title="CSS3"></div>
+                    <div class="item" style="--position: 8"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg" alt="JavaScript" title="JavaScript"></div>
+                    <div class="item" style="--position: 9"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" alt="GitHub" title="GitHub" style="filter: invert(1);"></div>
                 </div>
             </div>
         </section>
 
         <section class="my-project" id="proyectos">
             <h1 class="section-title autoDisplay">Mis Proyectos <span class="gradient">(16 Semanas)</span> <i class="fa-solid fa-laptop-code"></i></h1>
+            
             <div class="weeks-grid">
+                
                 <div class="week-card autoBlur">
-                    <h2>Semana 1</h2>
-                    <p>Cargando información...</p>
-                    <button class="btn-ver">Visualizar Proyecto</button>
+                    <h2><i class="fa-solid fa-diagram-project"></i> Semana 1</h2>
+                    <p>Modelo conceptual inicial del sistema de base de datos.</p>
+                    <button class="btn-ver btn-preview" data-type="image" data-src="https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=800&q=80" data-title="Diagrama Conceptual - Semana 1"><i class="fa-regular fa-image"></i> Visualizar Proyecto</button>
                     <div class="admin-controls">
-                        <button class="btn-admin btn-upload">Subir</button>
-                        <button class="btn-admin btn-save">Guardar</button>
-                        <button class="btn-admin btn-edit">Modificar</button>
-                        <button class="btn-admin btn-delete">Eliminar</button>
+                        <button class="btn-admin btn-upload"><i class="fa-solid fa-upload"></i> Subir</button>
+                        <button class="btn-admin btn-save"><i class="fa-solid fa-floppy-disk"></i> Guardar</button>
+                        <button class="btn-admin btn-edit"><i class="fa-solid fa-pen"></i> Modificar</button>
+                        <button class="btn-admin btn-delete"><i class="fa-solid fa-trash"></i> Eliminar</button>
                     </div>
                 </div>
+
+                <div class="week-card autoBlur">
+                    <h2><i class="fa-solid fa-table-cells-large"></i> Semana 2</h2>
+                    <p>Reporte de normalización de tablas (1FN, 2FN, 3FN).</p>
+                    <button class="btn-ver btn-preview" data-type="pdf" data-src="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" data-title="Reporte de Normalización - PDF"><i class="fa-solid fa-file-pdf"></i> Visualizar PDF</button>
+                    <div class="admin-controls">
+                        <button class="btn-admin btn-upload"><i class="fa-solid fa-upload"></i> Subir</button>
+                        <button class="btn-admin btn-save"><i class="fa-solid fa-floppy-disk"></i> Guardar</button>
+                        <button class="btn-admin btn-edit"><i class="fa-solid fa-pen"></i> Modificar</button>
+                        <button class="btn-admin btn-delete"><i class="fa-solid fa-trash"></i> Eliminar</button>
+                    </div>
                 </div>
+
+                <div class="week-card autoBlur">
+                    <h2><i class="fa-solid fa-key"></i> Semana 3</h2>
+                    <p>Definición de llaves primarias y foráneas (Integridad Referencial).</p>
+                    <button class="btn-ver"><i class="fa-solid fa-folder-open"></i> Visualizar Proyecto</button>
+                    <div class="admin-controls">
+                        <button class="btn-admin btn-upload"><i class="fa-solid fa-upload"></i> Subir</button>
+                        <button class="btn-admin btn-save"><i class="fa-solid fa-floppy-disk"></i> Guardar</button>
+                        <button class="btn-admin btn-edit"><i class="fa-solid fa-pen"></i> Modificar</button>
+                        <button class="btn-admin btn-delete"><i class="fa-solid fa-trash"></i> Eliminar</button>
+                    </div>
+                </div>
+
+                <div class="week-card autoBlur">
+                    <h2><i class="fa-solid fa-code-merge"></i> Semana 4</h2>
+                    <p>Consultas con INNER JOIN múltiples.</p>
+                    <button class="btn-ver"><i class="fa-solid fa-folder-open"></i> Visualizar Proyecto</button>
+                    <div class="admin-controls">
+                        <button class="btn-admin btn-upload"><i class="fa-solid fa-upload"></i> Subir</button>
+                        <button class="btn-admin btn-save"><i class="fa-solid fa-floppy-disk"></i> Guardar</button>
+                        <button class="btn-admin btn-edit"><i class="fa-solid fa-pen"></i> Modificar</button>
+                        <button class="btn-admin btn-delete"><i class="fa-solid fa-trash"></i> Eliminar</button>
+                    </div>
+                </div>
+
+                <div class="week-card autoBlur">
+                    <h2><i class="fa-solid fa-calculator"></i> Semana 5</h2>
+                    <p>Aún no hay archivos subidos.</p>
+                    <button class="btn-ver"><i class="fa-solid fa-folder-open"></i> Visualizar Proyecto</button>
+                    <div class="admin-controls">
+                        <button class="btn-admin btn-upload"><i class="fa-solid fa-upload"></i> Subir</button>
+                        <button class="btn-admin btn-save"><i class="fa-solid fa-floppy-disk"></i> Guardar</button>
+                        <button class="btn-admin btn-edit"><i class="fa-solid fa-pen"></i> Modificar</button>
+                        <button class="btn-admin btn-delete"><i class="fa-solid fa-trash"></i> Eliminar</button>
+                    </div>
+                </div>
+
+                <div class="week-card autoBlur">
+                    <h2><i class="fa-solid fa-magnifying-glass-chart"></i> Semana 6</h2>
+                    <p>Aún no hay archivos subidos.</p>
+                    <button class="btn-ver"><i class="fa-solid fa-folder-open"></i> Visualizar Proyecto</button>
+                    <div class="admin-controls">
+                        <button class="btn-admin btn-upload"><i class="fa-solid fa-upload"></i> Subir</button>
+                        <button class="btn-admin btn-save"><i class="fa-solid fa-floppy-disk"></i> Guardar</button>
+                        <button class="btn-admin btn-edit"><i class="fa-solid fa-pen"></i> Modificar</button>
+                        <button class="btn-admin btn-delete"><i class="fa-solid fa-trash"></i> Eliminar</button>
+                    </div>
+                </div>
+
+                <div class="week-card autoBlur">
+                    <h2><i class="fa-solid fa-terminal"></i> Semana 7</h2>
+                    <p>Aún no hay archivos subidos.</p>
+                    <button class="btn-ver"><i class="fa-solid fa-folder-open"></i> Visualizar Proyecto</button>
+                    <div class="admin-controls">
+                        <button class="btn-admin btn-upload"><i class="fa-solid fa-upload"></i> Subir</button>
+                        <button class="btn-admin btn-save"><i class="fa-solid fa-floppy-disk"></i> Guardar</button>
+                        <button class="btn-admin btn-edit"><i class="fa-solid fa-pen"></i> Modificar</button>
+                        <button class="btn-admin btn-delete"><i class="fa-solid fa-trash"></i> Eliminar</button>
+                    </div>
+                </div>
+
+                <div class="week-card autoBlur" style="border-color: #ffc107;">
+                    <h2 style="color: #ffc107;"><i class="fa-solid fa-graduation-cap"></i> Semana 8</h2>
+                    <p>Semana de Exámenes Parciales de BD2.</p>
+                    <button class="btn-ver" style="border-color:#ffc107; color: white;"><i class="fa-solid fa-file-contract"></i> Visualizar Evaluaciones</button>
+                    <div class="admin-controls">
+                        <button class="btn-admin btn-upload"><i class="fa-solid fa-upload"></i> Subir</button>
+                        <button class="btn-admin btn-save"><i class="fa-solid fa-floppy-disk"></i> Guardar</button>
+                        <button class="btn-admin btn-edit"><i class="fa-solid fa-pen"></i> Modificar</button>
+                        <button class="btn-admin btn-delete"><i class="fa-solid fa-trash"></i> Eliminar</button>
+                    </div>
+                </div>
+
+                <div class="week-card autoBlur">
+                    <h2><i class="fa-solid fa-layer-group"></i> Semana 9</h2>
+                    <p>Subconsultas y Vistas.</p>
+                    <button class="btn-ver"><i class="fa-solid fa-folder-open"></i> Visualizar Proyecto</button>
+                    <div class="admin-controls">
+                        <button class="btn-admin btn-upload"><i class="fa-solid fa-upload"></i> Subir</button>
+                        <button class="btn-admin btn-save"><i class="fa-solid fa-floppy-disk"></i> Guardar</button>
+                        <button class="btn-admin btn-edit"><i class="fa-solid fa-pen"></i> Modificar</button>
+                        <button class="btn-admin btn-delete"><i class="fa-solid fa-trash"></i> Eliminar</button>
+                    </div>
+                </div>
+
+                <div class="week-card autoBlur">
+                    <h2><i class="fa-solid fa-gears"></i> Semana 10</h2>
+                    <p>Procedimientos Almacenados (CRUD).</p>
+                    <button class="btn-ver"><i class="fa-solid fa-folder-open"></i> Visualizar Proyecto</button>
+                    <div class="admin-controls">
+                        <button class="btn-admin btn-upload"><i class="fa-solid fa-upload"></i> Subir</button>
+                        <button class="btn-admin btn-save"><i class="fa-solid fa-floppy-disk"></i> Guardar</button>
+                        <button class="btn-admin btn-edit"><i class="fa-solid fa-pen"></i> Modificar</button>
+                        <button class="btn-admin btn-delete"><i class="fa-solid fa-trash"></i> Eliminar</button>
+                    </div>
+                </div>
+
+                <div class="week-card autoBlur">
+                    <h2><i class="fa-solid fa-bolt"></i> Semana 11</h2>
+                    <p>Triggers (DML).</p>
+                    <button class="btn-ver"><i class="fa-solid fa-folder-open"></i> Visualizar Proyecto</button>
+                    <div class="admin-controls">
+                        <button class="btn-admin btn-upload"><i class="fa-solid fa-upload"></i> Subir</button>
+                        <button class="btn-admin btn-save"><i class="fa-solid fa-floppy-disk"></i> Guardar</button>
+                        <button class="btn-admin btn-edit"><i class="fa-solid fa-pen"></i> Modificar</button>
+                        <button class="btn-admin btn-delete"><i class="fa-solid fa-trash"></i> Eliminar</button>
+                    </div>
+                </div>
+
+                <div class="week-card autoBlur">
+                    <h2><i class="fa-solid fa-shield-halved"></i> Semana 12</h2>
+                    <p>Transacciones y Control de Errores.</p>
+                    <button class="btn-ver"><i class="fa-solid fa-folder-open"></i> Visualizar Proyecto</button>
+                    <div class="admin-controls">
+                        <button class="btn-admin btn-upload"><i class="fa-solid fa-upload"></i> Subir</button>
+                        <button class="btn-admin btn-save"><i class="fa-solid fa-floppy-disk"></i> Guardar</button>
+                        <button class="btn-admin btn-edit"><i class="fa-solid fa-pen"></i> Modificar</button>
+                        <button class="btn-admin btn-delete"><i class="fa-solid fa-trash"></i> Eliminar</button>
+                    </div>
+                </div>
+
+                <div class="week-card autoBlur">
+                    <h2><i class="fa-solid fa-square-root-variable"></i> Semana 13</h2>
+                    <p>Funciones Escalares y de Tabla.</p>
+                    <button class="btn-ver"><i class="fa-solid fa-folder-open"></i> Visualizar Proyecto</button>
+                    <div class="admin-controls">
+                        <button class="btn-admin btn-upload"><i class="fa-solid fa-upload"></i> Subir</button>
+                        <button class="btn-admin btn-save"><i class="fa-solid fa-floppy-disk"></i> Guardar</button>
+                        <button class="btn-admin btn-edit"><i class="fa-solid fa-pen"></i> Modificar</button>
+                        <button class="btn-admin btn-delete"><i class="fa-solid fa-trash"></i> Eliminar</button>
+                    </div>
+                </div>
+
+                <div class="week-card autoBlur">
+                    <h2><i class="fa-solid fa-arrow-pointer"></i> Semana 14</h2>
+                    <p>Aún no hay archivos subidos.</p>
+                    <button class="btn-ver"><i class="fa-solid fa-folder-open"></i> Visualizar Proyecto</button>
+                    <div class="admin-controls">
+                        <button class="btn-admin btn-upload"><i class="fa-solid fa-upload"></i> Subir</button>
+                        <button class="btn-admin btn-save"><i class="fa-solid fa-floppy-disk"></i> Guardar</button>
+                        <button class="btn-admin btn-edit"><i class="fa-solid fa-pen"></i> Modificar</button>
+                        <button class="btn-admin btn-delete"><i class="fa-solid fa-trash"></i> Eliminar</button>
+                    </div>
+                </div>
+
+                <div class="week-card autoBlur">
+                    <h2><i class="fa-solid fa-chart-line"></i> Semana 15</h2>
+                    <p>Optimización y Planes de Ejecución.</p>
+                    <button class="btn-ver"><i class="fa-solid fa-folder-open"></i> Visualizar Proyecto</button>
+                    <div class="admin-controls">
+                        <button class="btn-admin btn-upload"><i class="fa-solid fa-upload"></i> Subir</button>
+                        <button class="btn-admin btn-save"><i class="fa-solid fa-floppy-disk"></i> Guardar</button>
+                        <button class="btn-admin btn-edit"><i class="fa-solid fa-pen"></i> Modificar</button>
+                        <button class="btn-admin btn-delete"><i class="fa-solid fa-trash"></i> Eliminar</button>
+                    </div>
+                </div>
+
+                <div class="week-card autoBlur" style="border-color: #28a745; background: rgba(40, 167, 69, 0.1);">
+                    <h2 style="color: #28a745;"><i class="fa-solid fa-trophy"></i> Semana 16</h2>
+                    <p>Proyecto Final Sustentatorio de Base de Datos 2.</p>
+                    <button class="btn-ver" style="background: rgba(40, 167, 69, 0.2); border-color: #28a745;"><i class="fa-solid fa-star"></i> Proyecto Final</button>
+                    <div class="admin-controls">
+                        <button class="btn-admin btn-upload"><i class="fa-solid fa-upload"></i> Subir</button>
+                        <button class="btn-admin btn-save"><i class="fa-solid fa-floppy-disk"></i> Guardar</button>
+                        <button class="btn-admin btn-edit"><i class="fa-solid fa-pen"></i> Modificar</button>
+                        <button class="btn-admin btn-delete"><i class="fa-solid fa-trash"></i> Eliminar</button>
+                    </div>
+                </div>
+
+            </div>
         </section> 
 
         <section class="footer">
@@ -161,6 +363,8 @@
 
     <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="script.js?v=2"></script>
+    
+    <script src="script.js?v=3"></script>
+
 </body>
 </html>
