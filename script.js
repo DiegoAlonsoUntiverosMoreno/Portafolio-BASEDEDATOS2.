@@ -279,13 +279,16 @@ async function registrarUsuario() {
 function actualizarInterfazPorRol() {
     const adminElements = document.querySelectorAll(".admin-controls");
     const btnAuthHeader = document.getElementById("text-auth-header");
+    const btnAuthSidebar = document.getElementById("text-auth-sidebar"); // NUEVO PARA EL MÓVIL
 
     if (usuarioActual === "admin") {
         adminElements.forEach(el => el.style.display = "flex");
         btnAuthHeader.innerText = "Cerrar Sesión";
+        if (btnAuthSidebar) btnAuthSidebar.innerText = "Cerrar Sesión"; // Actualiza en móvil
     } else {
         adminElements.forEach(el => el.style.display = "none");
         btnAuthHeader.innerText = "Cerrar Sesión (Usuario)";
+        if (btnAuthSidebar) btnAuthSidebar.innerText = "Cerrar Sesión (Usuario)"; // Actualiza en móvil
     }
 
     document.querySelectorAll('.week-card').forEach(card => {
@@ -309,6 +312,13 @@ function abrirLogin() {
     overlay.style.display = "flex";
     createParticles(); 
     setTimeout(() => { overlay.style.opacity = "1"; }, 10);
+
+    // NUEVO: Cerrar el menú lateral en móvil al abrir el login
+    const sideBar = document.querySelector('.sidebar');
+    if (sideBar && sideBar.classList.contains('open-sidebar')) {
+        sideBar.classList.remove("open-sidebar");
+        sideBar.classList.add("close-sidebar");
+    }
 }
 
 function cerrarLoginModal() {
