@@ -1,4 +1,4 @@
-// Iniciar Animaciones AOS (protegido)
+// Iniciar Animaciones AOS
 if (typeof AOS !== 'undefined') {
     AOS.init();
 } else {
@@ -6,23 +6,30 @@ if (typeof AOS !== 'undefined') {
 }
 
 /* =======================================================
-   LÓGICA DE LAS 2 VISIBILIDADES (Login de Roles)
+   LÓGICA DE SUPABASE Y AUTENTICACIÓN
    ======================================================= */
+   
+// TUS LLAVES DE CONEXIÓN A SUPABASE
+const supabaseUrl = 'https://trdqrgfnxljjjgufmyhm.supabase.co';
+const supabaseAnonKey = 'sb_publishable_pLZMEZPywb7Fie8XBNPsUA_MtcqAPpn';
+
+// Creamos el cliente de conexión
+const clienteSupabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+
 let usuarioActual = ""; 
 
 // Función para crear partículas en el login
 function createParticles() {
     const container = document.getElementById('particles-container');
     if (!container) return;
-    container.innerHTML = ''; // Limpiar partículas anteriores si existen
-    const particleCount = 50; // Cantidad de partículas aumentada
+    container.innerHTML = ''; 
+    const particleCount = 50; 
     for (let i = 0; i < particleCount; i++) {
         let particle = document.createElement('div');
         particle.classList.add('particle');
-        // Posición y animaciones aleatorias por toda la pantalla
         particle.style.left = Math.random() * 100 + 'vw';
         particle.style.top = Math.random() * 100 + 'vh'; 
-        particle.style.animationDuration = (Math.random() * 4 + 2) + 's'; // Variación de velocidad
+        particle.style.animationDuration = (Math.random() * 4 + 2) + 's'; 
         particle.style.animationDelay = Math.random() * 2 + 's';
         container.appendChild(particle);
     }
@@ -35,7 +42,7 @@ function abrirLogin() {
     }
     const loginOverlay = document.getElementById("login-overlay");
     loginOverlay.style.display = "flex";
-    createParticles(); // Inicia las partículas al abrir
+    createParticles(); 
     setTimeout(() => { loginOverlay.style.opacity = "1"; }, 10);
 }
 
@@ -45,7 +52,7 @@ function cerrarLoginModal() {
     setTimeout(() => { 
         loginOverlay.style.display = "none"; 
         const container = document.getElementById('particles-container');
-        if (container) container.innerHTML = ''; // Limpia memoria al cerrar
+        if (container) container.innerHTML = ''; 
     }, 600);
 }
 
@@ -71,64 +78,65 @@ inputsAuth.forEach(input => {
     });
 });
 
-function validarLogin() {
-    const user = document.getElementById("username").value.trim().toLowerCase();
+// FUNCIÓN DE LOGIN CONECTADA A SUPABASE
+async function validarLogin() {
+    const userEmail = document.getElementById("username").value.trim().toLowerCase();
     const pass = document.getElementById("password").value.trim();
     const errorMsg = document.getElementById("login-error");
     
-    // Solo buscamos los elementos de administrador
     const adminElements = document.querySelectorAll(".admin-controls");
     const btnAuthHeader = document.getElementById("text-auth-header");
     const btnAuthSidebar = document.getElementById("btn-auth-sidebar");
+    
+    const loginBtn = document.querySelector(".login-btn span");
+    loginBtn.innerText = "Autenticando...";
 
-    if (user === "admin" && pass === "123") {
-        // ROL ADMINISTRADOR (Control Total)
-        errorMsg.style.display = "none";
-        usuarioActual = "admin";
-        
-        if(btnAuthHeader) btnAuthHeader.innerText = "Cerrar Sesión";
-        if(btnAuthSidebar) btnAuthSidebar.innerHTML = "<i class='fa-solid fa-right-from-bracket'></i> Cerrar Sesión";
-        
-        // Mostrar botones de Subir, Guardar, Modificar, Eliminar
-        adminElements.forEach(el => el.style.display = "flex"); 
-        
-        document.querySelectorAll('.week-card').forEach(card => {
-            card.style.animation = 'none';
-            card.style.filter = 'blur(0)';
-            card.style.opacity = '1';
-        });
+    // Consulta a la Base de Datos de Supabase
+    const { data, error } = await clienteSupabase.auth.signInWithPassword({
+        email: userEmail,
+        password: pass,
+    });
 
-        cerrarLoginModal();
-
-    } else if (user === "user" && pass === "123") {
-        // ROL USUARIO GENERAL (Solo Lectura)
-        errorMsg.style.display = "none";
-        usuarioActual = "user";
-        
-        if(btnAuthHeader) btnAuthHeader.innerText = "Cerrar Sesión (Usuario)";
-        if(btnAuthSidebar) btnAuthSidebar.innerHTML = "<i class='fa-solid fa-right-from-bracket'></i> Cerrar Sesión (Usuario)";
-        
-        // El usuario general NO VE los botones de control
-        adminElements.forEach(el => el.style.display = "none"); 
-        
-        document.querySelectorAll('.week-card').forEach(card => {
-            card.style.animation = 'none';
-            card.style.filter = 'blur(0)';
-            card.style.opacity = '1';
-        });
-        
-        cerrarLoginModal();
-
-    } else {
+    if (error) {
+        // Falló el login
         errorMsg.style.display = "block";
+        loginBtn.innerText = "Ingresar al Portafolio";
+    } else {
+        // Login exitoso
+        errorMsg.style.display = "none";
+        
+        // Verificamos si es el admin 
+        if (data.user.email === "admin@portafolio.com") {
+            usuarioActual = "admin";
+            if(btnAuthHeader) btnAuthHeader.innerText = "Cerrar Sesión";
+            if(btnAuthSidebar) btnAuthSidebar.innerHTML = "<i class='fa-solid fa-right-from-bracket'></i> Cerrar Sesión";
+            adminElements.forEach(el => el.style.display = "flex"); 
+        } else {
+            usuarioActual = "user";
+            if(btnAuthHeader) btnAuthHeader.innerText = "Cerrar Sesión (Usuario)";
+            if(btnAuthSidebar) btnAuthSidebar.innerHTML = "<i class='fa-solid fa-right-from-bracket'></i> Cerrar Sesión (Usuario)";
+            adminElements.forEach(el => el.style.display = "none"); 
+        }
+
+        document.querySelectorAll('.week-card').forEach(card => {
+            card.style.animation = 'none';
+            card.style.filter = 'blur(0)';
+            card.style.opacity = '1';
+        });
+
+        loginBtn.innerText = "Ingresar al Portafolio";
+        cerrarLoginModal();
     }
 }
 
-function cerrarSesion() {
+async function cerrarSesion() {
+    // Cerramos sesión en Supabase
+    await clienteSupabase.auth.signOut();
+    
     usuarioActual = "";
     document.getElementById("username").value = "";
     document.getElementById("password").value = "";
-    passwordInput.setAttribute('type', 'password'); // Resetear tipo de pass
+    passwordInput.setAttribute('type', 'password'); 
     if (togglePassword) { togglePassword.classList.remove('bx-show'); togglePassword.classList.add('bx-hide'); }
     
     const adminElements = document.querySelectorAll(".admin-controls");
@@ -187,7 +195,7 @@ function cerrarPreviewModal() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. Lógica para botones de visualización (Usuario General y Admin)
+    // 1. Lógica para botones de visualización
     const botonesCarpeta = document.querySelectorAll(".btn-ver");
     botonesCarpeta.forEach(btn => {
         btn.addEventListener("click", (e) => {
@@ -218,16 +226,14 @@ document.addEventListener("DOMContentLoaded", () => {
         btn.addEventListener("click", () => {
             const card = btn.closest('.week-card');
             if (card) {
-                // Crear un input de archivo dinámicamente para subir archivos locales
                 const fileInput = document.createElement('input');
                 fileInput.type = 'file';
-                fileInput.accept = 'image/*,application/pdf'; // Solo permite imágenes y PDFs
+                fileInput.accept = 'image/*,application/pdf'; 
 
                 fileInput.onchange = e => {
                     const file = e.target.files[0];
                     if (!file) return;
 
-                    // Determinar si es imagen o PDF
                     let fileType = '';
                     if (file.type.startsWith('image/')) {
                         fileType = 'image';
@@ -238,11 +244,9 @@ document.addEventListener("DOMContentLoaded", () => {
                         return;
                     }
 
-                    // Crear URL local temporal para previsualizar el archivo
                     const fileUrl = URL.createObjectURL(file);
                     
                     const btnVer = card.querySelector('.btn-ver');
-                    // Corrección de acceso al texto por si se incluye el icono HTML
                     const tituloSemana = card.querySelector('h2').innerText.trim();
                     
                     btnVer.setAttribute('data-type', fileType);
@@ -253,10 +257,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     btnVer.innerHTML = fileType === 'pdf' ? "<i class='fa-solid fa-file-pdf'></i> Visualizar PDF" : "<i class='fa-regular fa-image'></i> Visualizar Imagen";
                     card.querySelector('p').innerText = `Archivo cargado: ${file.name}`;
                     
-                    alert("✅ Archivo cargado exitosamente desde tu PC. No olvides pulsar 'Guardar'.");
+                    alert("✅ Archivo cargado exitosamente desde tu PC.");
                 };
 
-                // Abrir la ventana nativa de selección de archivos de la PC
                 fileInput.click();
 
             } else {
@@ -267,7 +270,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     saveBtns.forEach(btn => {
         btn.addEventListener("click", () => {
-            alert("💾 ¡Cambios sincronizados y guardados exitosamente en la base de datos!");
+            alert("💾 ¡Cambios guardados localmente!");
         });
     });
 
