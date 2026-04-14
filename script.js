@@ -5,19 +5,15 @@ if (typeof AOS !== 'undefined') {
     AOS.init();
 }
 
-// Configuración de conexión (Tus credenciales de Supabase)
 const supabaseUrl = 'https://trdqrgfnxljjjgufmyhm.supabase.co';
 const supabaseAnonKey = 'sb_publishable_pLZMEZPywb7Fie8XBNPsUA_MtcqAPpn';
 const clienteSupabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
 
 let usuarioActual = ""; 
 
-// Se ejecuta apenas carga la página
 document.addEventListener("DOMContentLoaded", async () => {
-    // CARGAR DATOS: Traer lo guardado en la base de datos
     await cargarDatosDesdeNube();
     
-    // Configurar eventos para ver archivos (usuarios y admin)
     document.querySelectorAll(".btn-ver").forEach(btn => {
         btn.addEventListener("click", (e) => {
             if (usuarioActual === "") {
@@ -25,11 +21,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 alert("Acceso restringido: Por favor inicia sesión.");
                 abrirLogin(); 
             } else if (btn.classList.contains("btn-preview")) {
-                abrirPreviewModal(
-                    btn.getAttribute("data-type"), 
-                    btn.getAttribute("data-src"), 
-                    btn.getAttribute("data-title")
-                );
+                abrirPreviewModal(btn.getAttribute("data-type"), btn.getAttribute("data-src"), btn.getAttribute("data-title"));
             } else {
                 alert("No hay archivos cargados para esta semana.");
             }
@@ -40,16 +32,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 // =======================================================
-// 2. PERSISTENCIA: LEER Y ESCRIBIR EN LA NUBE
+// 2. PERSISTENCIA: LEER Y ESCRIBIR
 // =======================================================
 
 async function cargarDatosDesdeNube() {
     const { data, error } = await clienteSupabase.from('proyectos').select('*');
-    
-    if (error) {
-        console.error("Error al conectar:", error.message);
-        return;
-    }
+    if (error) return;
 
     if (data) {
         const tarjetas = document.querySelectorAll('.week-card');
@@ -58,19 +46,14 @@ async function cargarDatosDesdeNube() {
             if (tarjetas[index]) {
                 const card = tarjetas[index];
                 const btnVer = card.querySelector('.btn-ver');
-                
-                // Actualizar texto descriptivo
                 card.querySelector('p').innerText = item.descripcion;
 
-                // Si hay un archivo (PDF/IMG), activar el botón de vista previa
                 if (item.file_url) {
                     btnVer.setAttribute('data-type', item.file_type);
                     btnVer.setAttribute('data-src', item.file_url);
                     btnVer.setAttribute('data-title', `Semana ${item.id} - ${item.file_name}`);
                     btnVer.classList.add('btn-preview');
-                    btnVer.innerHTML = item.file_type === 'pdf' 
-                        ? "<i class='fa-solid fa-file-pdf'></i> Ver PDF" 
-                        : "<i class='fa-regular fa-image'></i> Ver Imagen";
+                    btnVer.innerHTML = item.file_type === 'pdf' ? "<i class='fa-solid fa-file-pdf'></i> Ver PDF" : "<i class='fa-regular fa-image'></i> Ver Imagen";
                 }
             }
         });
@@ -78,7 +61,6 @@ async function cargarDatosDesdeNube() {
 }
 
 function configurarAccionesAdmin() {
-    // BOTÓN SUBIR (Storage + Database)
     document.querySelectorAll(".btn-upload").forEach((btn, index) => {
         btn.addEventListener("click", () => {
             if (usuarioActual !== "admin") return;
@@ -95,10 +77,16 @@ function configurarAccionesAdmin() {
                 const originalHTML = btn.innerHTML;
                 btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i>";
 
-                // 1. Subir al Storage (Bucket: portafolio)
-                const nombreLimpio = archivo.name.replace(/[^a-zA-Z0-9.]/g, '_');
+                // --- SOLUCIÓN AL ERROR "INVALID KEY" ---
+                // Reemplazamos espacios, tildes y caracteres raros por guiones bajos
+                const nombreLimpio = archivo.name
+                    .normalize("NFD") // Separa las tildes de las letras
+                    .replace(/[\u0300-\u036f]/g, "") // Borra las tildes
+                    .replace(/[^a-zA-Z0-9.]/g, '_'); // Todo lo que no sea letra o número será '_'
+                
                 const ruta = `semana_${semana}/${Date.now()}_${nombreLimpio}`;
                 
+                // 1. Subir al Storage
                 const { error: stError } = await clienteSupabase.storage
                     .from('portafolio')
                     .upload(ruta, archivo);
@@ -109,11 +97,11 @@ function configurarAccionesAdmin() {
                     return;
                 }
 
-                // 2. Obtener URL y guardar en Tabla 'proyectos'
+                // 2. Obtener URL y guardar en Database
                 const { data: urlData } = clienteSupabase.storage.from('portafolio').getPublicUrl(ruta);
                 const { error: dbError } = await clienteSupabase.from('proyectos').upsert({
                     id: semana,
-                    descripcion: `Proyecto: ${archivo.name}`,
+                    descripcion: `Archivo: ${archivo.name}`,
                     file_url: urlData.publicUrl,
                     file_type: archivo.type === 'application/pdf' ? 'pdf' : 'image',
                     file_name: archivo.name
@@ -121,7 +109,7 @@ function configurarAccionesAdmin() {
 
                 if (dbError) alert("Error DB: " + dbError.message);
                 else {
-                    alert("✅ Guardado permanentemente en la nube.");
+                    alert("✅ Guardado con éxito.");
                     location.reload();
                 }
                 btn.innerHTML = originalHTML;
@@ -130,7 +118,7 @@ function configurarAccionesAdmin() {
         });
     });
 
-    // BOTÓN GUARDAR (Solo texto)
+    // Botón Guardar (Texto)
     document.querySelectorAll(".btn-save").forEach((btn, index) => {
         btn.addEventListener("click", async () => {
             const p = btn.closest('.week-card').querySelector('p').innerText;
@@ -138,11 +126,11 @@ function configurarAccionesAdmin() {
                 id: index + 1,
                 descripcion: p
             });
-            if (!error) alert("Texto sincronizado.");
+            if (!error) alert("Texto guardado.");
         });
     });
 
-    // BOTÓN EDITAR (Cambio local de texto)
+    // Botón Editar
     document.querySelectorAll(".btn-edit").forEach(btn => {
         btn.addEventListener("click", () => {
             const p = btn.closest('.week-card').querySelector('p');
@@ -151,10 +139,10 @@ function configurarAccionesAdmin() {
         });
     });
 
-    // BOTÓN ELIMINAR
+    // Botón Eliminar
     document.querySelectorAll(".btn-delete").forEach((btn, index) => {
         btn.addEventListener("click", async () => {
-            if (confirm("¿Eliminar registro de la base de datos?")) {
+            if (confirm("¿Eliminar registro?")) {
                 await clienteSupabase.from('proyectos').delete().eq('id', index + 1);
                 location.reload();
             }
@@ -169,13 +157,10 @@ function configurarAccionesAdmin() {
 async function validarLogin() {
     const email = document.getElementById("username").value.trim().toLowerCase();
     const pass = document.getElementById("password").value.trim();
-    
     const { data, error } = await clienteSupabase.auth.signInWithPassword({ email, password: pass });
 
     if (error) {
-        const errDiv = document.getElementById("login-error");
-        errDiv.style.display = "block";
-        errDiv.innerText = "Error: Credenciales inválidas.";
+        document.getElementById("login-error").style.display = "block";
     } else {
         usuarioActual = (data.user.email === "admin@portafolio.com") ? "admin" : "user";
         actualizarInterfaz();
@@ -185,29 +170,12 @@ async function validarLogin() {
 
 function actualizarInterfaz() {
     const esAdmin = (usuarioActual === "admin");
-    
-    // Mostrar u ocultar controles de edición
-    document.querySelectorAll(".admin-controls").forEach(el => {
-        el.style.display = esAdmin ? "flex" : "none";
-    });
-
-    // Actualizar botones de navegación
-    const btnHeader = document.getElementById("text-auth-header");
-    if (btnHeader) btnHeader.innerText = esAdmin ? "Cerrar Sesión (Admin)" : "Cerrar Sesión";
-
-    // Quitar desenfoque de las tarjetas
+    document.querySelectorAll(".admin-controls").forEach(el => el.style.display = esAdmin ? "flex" : "none");
+    document.getElementById("text-auth-header").innerText = esAdmin ? "Cerrar Sesión" : "Cerrar (User)";
     document.querySelectorAll('.week-card').forEach(card => {
         card.style.filter = 'blur(0)';
         card.style.opacity = '1';
     });
-}
-
-async function registrarUsuario() {
-    const email = document.getElementById("username").value.trim();
-    const pass = document.getElementById("password").value.trim();
-    const { error } = await clienteSupabase.auth.signUp({ email, password: pass });
-    if (error) alert(error.message);
-    else alert("Cuenta creada. Ahora intenta ingresar.");
 }
 
 async function cerrarSesion() {
@@ -216,40 +184,33 @@ async function cerrarSesion() {
 }
 
 // =======================================================
-// 4. FUNCIONES DE MODALES Y UI
+// 4. FUNCIONES DE UI (MODALES)
 // =======================================================
 
 function abrirLogin() {
     if (usuarioActual !== "") { cerrarSesion(); return; }
-    const overlay = document.getElementById("login-overlay");
-    overlay.style.display = "flex";
+    document.getElementById("login-overlay").style.display = "flex";
     createParticles();
-    setTimeout(() => { overlay.style.opacity = "1"; }, 10);
+    setTimeout(() => { document.getElementById("login-overlay").style.opacity = "1"; }, 10);
 }
 
 function cerrarLoginModal() {
-    const overlay = document.getElementById("login-overlay");
-    overlay.style.opacity = "0";
-    setTimeout(() => { overlay.style.display = "none"; }, 600);
+    document.getElementById("login-overlay").style.opacity = "0";
+    setTimeout(() => { document.getElementById("login-overlay").style.display = "none"; }, 600);
 }
 
 function abrirPreviewModal(tipo, url, titulo) {
     const modal = document.getElementById("preview-modal");
-    const container = document.getElementById("preview-container");
     document.getElementById("preview-title").innerHTML = `<i class='fa-solid fa-file-circle-check'></i> ${titulo}`;
-    
-    container.innerHTML = tipo === "image" 
-        ? `<img src="${url}" style="max-width:100%; height:auto;">` 
-        : `<iframe src="${url}" width="100%" height="100%" style="border:none;"></iframe>`;
-
+    const container = document.getElementById("preview-container");
+    container.innerHTML = tipo === "image" ? `<img src="${url}" style="max-width:100%">` : `<iframe src="${url}" width="100%" height="100%" style="border:none;"></iframe>`;
     modal.style.display = "flex";
     setTimeout(() => { modal.style.opacity = "1"; }, 10);
 }
 
 function cerrarPreviewModal() {
-    const modal = document.getElementById("preview-modal");
-    modal.style.opacity = "0";
-    setTimeout(() => { modal.style.display = "none"; }, 400);
+    document.getElementById("preview-modal").style.opacity = "0";
+    setTimeout(() => { document.getElementById("preview-modal").style.display = "none"; }, 400);
 }
 
 function createParticles() {
@@ -265,14 +226,8 @@ function createParticles() {
     }
 }
 
-// Menú Móvil
+// Menú móvil
 const menuIcon = document.querySelector('.menu-icon');
-const closeIcon = document.querySelector('.close-icon');
 const sideBar = document.querySelector('.sidebar');
-
-if (menuIcon && sideBar) {
-    menuIcon.onclick = () => { sideBar.classList.add("open-sidebar"); sideBar.classList.remove("close-sidebar"); };
-}
-if (closeIcon && sideBar) {
-    closeIcon.onclick = () => { sideBar.classList.add("close-sidebar"); sideBar.classList.remove("open-sidebar"); };
-}
+if (menuIcon) menuIcon.onclick = () => sideBar.classList.add("open-sidebar");
+if (document.querySelector('.close-icon')) document.querySelector('.close-icon').onclick = () => sideBar.classList.remove("open-sidebar");
