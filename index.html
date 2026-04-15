@@ -10,18 +10,18 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     
-    <link rel="stylesheet" href="style.css?v=3">
+    <link rel="stylesheet" href="style.css?v=7">
 </head>
 <body>
 
     <div id="login-overlay">
         <div id="particles-container"></div>
-        
         <div class="login-card">
             <div class="close-login" onclick="cerrarLoginModal()"><i class='bx bx-x'></i></div>
             <div class="login-avatar"><i class="fa-solid fa-database"></i></div>
-            <h2>Acceso a <span class="gradient-text">BD2</span></h2>
-            <p class="login-subtitle">Ingresa tus credenciales para continuar</p>
+            
+            <h2 id="auth-title">Acceso a <span class="gradient-text">BD2</span></h2>
+            <p class="login-subtitle" id="auth-subtitle">Ingresa tus credenciales para continuar</p>
             
             <div class="input-group">
                 <i class='bx bx-envelope input-icon'></i>
@@ -34,15 +34,15 @@
             </div>
             <p id="login-error"><i class='bx bx-error-circle'></i> Credenciales incorrectas.</p>
             
-            <button class="login-btn" onclick="validarLogin()">
-                <span>Ingresar al Portafolio</span>
+            <button class="login-btn" onclick="procesarAuth()">
+                <span id="btn-auth-text">Ingresar al Portafolio</span>
                 <i class="fa-solid fa-rocket"></i>
             </button>
 
             <div class="login-hints">
-                <span>Admin: <b>admin@portafolio.com / 123456</b></span>
-                <br>
-                <span>Usuario: <b>user@portafolio.com / 123456</b></span>
+                <span id="auth-toggle-text">¿No tienes cuenta? <b style="cursor:pointer; color:#00d2ff;" onclick="toggleAuthMode()">Regístrate aquí</b></span>
+                <br><br>
+                <span style="font-size: 11px; opacity: 0.7;">(Profesor/Admin: admin@ms.upla.edu.pe / 123456)</span>
             </div>
         </div>
     </div>
@@ -99,12 +99,9 @@
                 <p>Bienvenido a mi portafolio del curso de Base de Datos 2. Aquí encontrarás todos mis diagramas, modelados y scripts avanzados en SQL Server.</p>
                 <button onclick="document.getElementById('proyectos').scrollIntoView();"><i class="fa-solid fa-folder-open"></i> Ver Trabajos</button>
             </div>
-            
             <div class="hero-logo-box autoBlur" data-aos="fade-left" data-aos-duration="1500">
                 <img class="hero-logo" src="images/logo_upla_sin_fondo_1_20240529_1151847739.png" alt="Logo Universidad Peruana Los Andes">
             </div>
-            
-            <div class="scroll-down"></div>
         </section>
 
         <section class="info-section" id="sobre-mi">
@@ -125,15 +122,14 @@
 
         <section class="skills-section" id="habilidades">
             <h1 class="section-title autoDisplay">Mis Habilidades Técnicas <i class="fa-solid fa-dumbbell"></i></h1>
-            
             <div class="skills-box autoDisplay">
                 <div class="skill-card">
                     <h1 class="gradient">Diseño de BD <i class="fa-solid fa-diagram-project"></i></h1>
-                    <p>Como estudiante de 5to ciclo, comprendo el ciclo de vida de una base de datos. Diseño modelos Entidad-Relación y relacionales, aplico reglas de normalización hasta la 3FN para evitar redundancias, y utilizo herramientas de diagramado para estructurar la información lógica antes de codificar.</p>  
+                    <p>Diseño modelos Entidad-Relación y relacionales, aplico reglas de normalización hasta la 3FN y utilizo herramientas de diagramado profesional.</p>  
                 </div>
                 <div class="skill-card">
                     <h1 class="gradient">Desarrollo SQL <i class="fa-solid fa-code"></i></h1>
-                    <p>Manejo de consultas T-SQL a nivel intermedio. Capacidad para crear tablas con restricciones (PK, FK, Check), realizar uniones de datos complejas mediante INNER y OUTER JOINs, uso de subconsultas, y desarrollo inicial de Vistas y Procedimientos Almacenados simples en SQL Server.</p>
+                    <p>Manejo de consultas T-SQL, restricciones (PK, FK), INNER JOINs complejos, subconsultas y procedimientos almacenados en SQL Server.</p>
                 </div>
             </div>
 
@@ -364,7 +360,7 @@
     <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
-    <script src="script.js?v=3"></script>
+    <script src="script.js?v=7"></script>
 
 </body>
 </html>
