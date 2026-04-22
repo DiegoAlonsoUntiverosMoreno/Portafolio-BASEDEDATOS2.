@@ -80,8 +80,8 @@ document.addEventListener('fullscreenchange', () => {
 });
 
 // Llaves de conexión a Supabase
-const supabaseUrl = 'https://trdqrgfnxljjjgufmyhm.supabase.co';
-const supabaseAnonKey = 'sb_publishable_pLZMEZPywb7Fie8XBNPsUA_MtcqAPpn';
+const supabaseUrl = 'https://oqhnftjqmhtolrchyisj.supabase.co';
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xaG5mdGpxbWh0b2xyY2h5aXNqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2OTcwMDIsImV4cCI6MjA5MjI3MzAwMn0.b3jM5GoyQlhjbuR3s0_HpcRDnWH37TOGIrIqjgE3mH4';
 const clienteSupabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
 
 let usuarioActual = ""; 
