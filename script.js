@@ -1,5 +1,5 @@
 // =======================================================
-// 1. CONFIGURACIÓN E INICIALIZACIÓN
+// 1. CONFIGURACIÓN E INICIALIZACIÓN (SCRIPT.JS ORIGINAL)
 // =======================================================
 
 if (typeof AOS !== 'undefined') {
@@ -175,7 +175,7 @@ function renderArchivosUI(card, archivos) {
         btnDownload.innerHTML = `<i class="bx bx-download"></i>`;
         
         if(card.getAttribute('data-semana') === "16") {
-             btnDownload.style.borderColor = "#22c55e"; btnDownload.style.color = "#22c55e";
+            btnDownload.style.borderColor = "#22c55e"; btnDownload.style.color = "#22c55e";
         }
         
         btnDownload.onclick = async (e) => {
@@ -537,3 +537,355 @@ function createParticles() {
 const sideBar = document.querySelector('.sidebar');
 if (document.querySelector('.menu-icon')) document.querySelector('.menu-icon').addEventListener("click", () => { sideBar.classList.remove("close-sidebar"); sideBar.classList.add("open-sidebar"); });
 if (document.querySelector('.close-icon')) document.querySelector('.close-icon').addEventListener("click", () => { sideBar.classList.remove("open-sidebar"); sideBar.classList.add("close-sidebar"); });
+
+// ============================================================
+//  6. CHATBOT IA — AÑADIDO E INTEGRADO (UNTIBOT)
+// ============================================================
+
+(function () {
+    // ─── DATOS DE CADA SEMANA ────────────────────────────────
+    const SEMANAS_INFO = {
+        1:  { titulo: "Modelos Arquitecturas de Base de Datos",  tema: "Arquitectura Centralizada (todo en 1 servidor, punto único de fallo), Arquitectura Cliente-Servidor (Servidor aloja datos, Clientes piden y muestran) y Arquitectura Distribuida (nodos separados, alta disponibilidad y tolerancia a fallos)." },
+        2:  { titulo: "Gestores de Base de Datos y Modelo Entidad-Relación", tema: "SGBD (Relacionales/SQL como SQL Server y No relacionales/NoSQL). Modelo E-R con Entidades (objetos), Atributos (características), Relaciones y Cardinalidades (1:1, 1:N, N:M)." },
+        3:  { titulo: "Diseño de Arquitectura de Base de Datos y Modelado Relacional", tema: "Fases del diseño: Conceptual (Modelo E-R), Lógico (Modelado Relacional) y Físico (SQL Server). Modelado relacional abarca Tabla, Fila/Tupla, Columna, Clave Primaria (PK) y Clave Foránea (FK)." },
+        4:  { titulo: "Tipos de Arquitectura de Base de Datos y Normalizacion", tema: "Tipos de arquitectura por distribución (Centralizada, Distribuida y en la Nube). Normalización: 1FN (Atomicidad), 2FN (Dependencia Funcional Completa a la PK) y 3FN (Sin dependencias transitivas)." },
+        5:  { titulo: "Funciones de Agregación",   tema: "Uso de COUNT, SUM, AVG, MAX, MIN con GROUP BY y HAVING. Se generan reportes estadísticos y resúmenes de datos desde múltiples tablas." },
+        6:  { titulo: "Subconsultas avanzadas",    tema: "Subconsultas correlacionadas, EXISTS, IN, ALL y ANY. Se construyen consultas anidadas para resolver problemas complejos de recuperación de datos." },
+        7:  { titulo: "Consultas complejas",       tema: "Optimización de consultas T-SQL, uso de índices y análisis de planes de ejecución básicos para mejorar el rendimiento en SQL Server." },
+        8:  { titulo: "Exámenes Parciales",        tema: "Semana de Exámenes Parciales de Base de Datos 2. Se evalúan todos los temas de la Unidad I y II." },
+        9:  { titulo: "Subconsultas y Vistas",     tema: "Creación y uso de Vistas (CREATE VIEW) y subconsultas avanzadas. Las vistas permiten encapsular consultas complejas y reutilizarlas como tablas virtuales." },
+        10: { titulo: "Procedimientos Almacenados",tema: "Stored Procedures con operaciones CRUD (INSERT, UPDATE, DELETE, SELECT). Se aprende a crear lógica de negocio directamente en el motor de base de datos." },
+        11: { titulo: "Triggers DML",              tema: "Triggers de tipo AFTER INSERT, UPDATE y DELETE. Permiten ejecutar lógica automática ante cambios en los datos, ideal para auditoría y validaciones." },
+        12: { titulo: "Transacciones y Errores",   tema: "Control de transacciones con BEGIN TRAN, COMMIT, ROLLBACK y manejo de errores con TRY/CATCH. Fundamental para garantizar la atomicidad de operaciones." },
+        13: { titulo: "Funciones Escalares y de Tabla", tema: "Creación de funciones escalares que retornan un valor y funciones con valor de tabla (TVF) que retornan conjuntos de datos reutilizables en consultas." },
+        14: { titulo: "Cursores",                  tema: "Cursores en T-SQL para recorrer registros uno a uno. Se aprende cuándo usarlos y sus alternativas más eficientes para procesamiento masivo de datos." },
+        15: { titulo: "Optimización",              tema: "Planes de ejecución, índices clustered y non-clustered, estadísticas y mejoras de rendimiento en SQL Server. Se analiza cómo el motor procesa las consultas." },
+        16: { titulo: "Proyecto Final",            tema: "Proyecto Final Sustentatorio de Base de Datos 2. Integración de todos los conceptos: diseño, normalización, stored procedures, triggers y optimización." },
+    };
+
+    const SYSTEM_PROMPT = `Eres UntiBot, el asistente IA del portafolio de Base de Datos 2 de Diego Alonso Untiveros Moreno, estudiante de la Universidad Peruana Los Andes (UPLA).
+
+Tu personalidad: profesional pero amigable, entusiasta de las bases de datos, respondes SIEMPRE en español, eres conciso (máximo 3-4 oraciones por respuesta), usas emojis técnicos ocasionalmente (📊 🗄️ 🔑 ⚡ etc).
+
+BASE DE CONOCIMIENTO TEÓRICO (UNIDAD I - SEMANAS 1 A 4):
+Utiliza ESTA información exacta si el usuario pregunta sobre estos temas:
+
+1. Modelos de Arquitectura de Base de Datos (Por Distribución):
+- Arquitectura Centralizada: Todos los componentes del SGBD y datos residen en un servidor central. Ventajas: Simplicidad, Consistencia. Desventajas: Punto Único de Fallo (SPOF), Cuello de Botella.
+- Arquitectura Cliente-Servidor: Servidor aloja la BD, múltiples Clientes envían peticiones. Ventajas: Reducción de tráfico, mejor distribución de carga. Desventajas: Depende de la red.
+- Arquitectura Distribuida: Datos fragmentados en múltiples nodos geográficos. Ventajas: Alta Disponibilidad, Rendimiento Local. Desventajas: Complejidad extrema, Alto Costo.
+
+2. Gestores de Base de Datos (SGBD) y Modelo Entidad-Relación (E-R):
+- SGBD Relacionales (RDBMS): Tablas con relaciones estrictas (SQL Server, MySQL). No Relacionales (NoSQL): Flexibles (MongoDB).
+- Modelo E-R (Peter Chen): Entidades (rectángulos), Atributos (óvalos), Relaciones (rombos). Cardinalidad: 1:1, 1:N, N:M.
+
+3. Diseño de Arquitectura de Base de Datos y Modelado Relacional:
+- Fases: Conceptual (E-R), Lógico (Relacional), Físico (Motor específico ej. SQL Server).
+- Modelado Relacional (E.F. Codd): Tabla, Fila (Tupla), Columna (Atributo), PK (Primary Key), FK (Foreign Key).
+
+4. Tipos de Arquitectura y Normalización:
+- Normalización: Organizar datos para reducir redundancia e integridad.
+- 1FN (Atomicidad): Valores atómicos, sin grupos repetitivos.
+- 2FN (Dependencia Funcional Completa): Estar en 1FN y los atributos no clave dependen completamente de toda la PK.
+- 3FN (Dependencia Transitiva): Estar en 2FN y ningún atributo no clave depende de otro no clave.
+
+CONTENIDO DEL PORTAFOLIO - 16 semanas en 4 unidades:
+${Object.entries(SEMANAS_INFO).map(([s, d]) => `• Semana ${s} - ${d.titulo}: ${d.tema}`).join('\n')}
+
+INSTRUCCIONES CLAVE:
+- Si el usuario menciona una semana específica (ej: "semana 5", "week 3", "s10"), explica su tema y di que puedes llevarlo ahí.
+- Si preguntan por SQL, normalización, JOINs, stored procedures, triggers, transacciones, índices o cualquier tema de BD: responde con conocimiento técnico preciso basado en la información de arriba.
+- Si preguntan quién es Diego: es estudiante de Ingeniería de Sistemas en UPLA, apasionado por el modelado y diseño de bases de datos con SQL Server.
+- Si el mensaje es un saludo: saluda de vuelta y ofrece navegar al portafolio o explicar alguna semana.
+- NUNCA inventes archivos subidos ni notas de examen.
+- Sé RÁPIDO y DIRECTO. No uses markdown complejo, solo texto limpio con saltos de línea si es necesario.`;
+
+    // ─── CONSTRUIR HTML DEL CHATBOT ──────────────────────────
+    const html = `
+    <button id="chatbot-toggle" title="Abrir Asistente IA">
+        <i class="fa-solid fa-robot"></i>
+        <span id="chatbot-badge">1</span>
+    </button>
+
+    <div id="chatbot-window">
+        <div id="chatbot-header">
+            <div class="chatbot-avatar"><i class="fa-solid fa-robot"></i></div>
+            <div class="chatbot-header-info">
+                <h4>UntiBot <span style="font-size:11px;color:#00d2ff;font-weight:400;">IA</span></h4>
+                <p>● En línea · Responde al instante</p>
+            </div>
+            <button id="chatbot-close" title="Cerrar"><i class="bx bx-x"></i></button>
+        </div>
+
+        <div id="chatbot-messages"></div>
+
+        <div id="chatbot-quick-chips">
+            <button class="quick-chip" data-msg="¿Qué temas cubre este portafolio?">📚 Temas</button>
+            <button class="quick-chip" data-msg="Llévame a la Semana 1">📍 Semana 1</button>
+            <button class="quick-chip" data-msg="Explícame la Normalización de la Semana 4">🔗 Normalización</button>
+            <button class="quick-chip" data-msg="¿Qué son los Stored Procedures?">⚙️ SP</button>
+            <button class="quick-chip" data-msg="Llévame al Proyecto Final">🏆 Final</button>
+            <button class="quick-chip" data-msg="¿Quién es Diego?">👤 Diego</button>
+        </div>
+
+        <div id="chatbot-input-area">
+            <textarea id="chatbot-input" rows="1" placeholder="Escribe algo... (ej: Semana 4, qué es 1FN...)" maxlength="400"></textarea>
+            <button id="chatbot-send" title="Enviar"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>`;
+
+    document.body.insertAdjacentHTML('beforeend', html);
+
+    // ─── REFERENCIAS ─────────────────────────────────────────
+    const toggleBtn   = document.getElementById('chatbot-toggle');
+    const window_     = document.getElementById('chatbot-window');
+    const closeBtn    = document.getElementById('chatbot-close');
+    const messagesDiv = document.getElementById('chatbot-messages');
+    const inputEl     = document.getElementById('chatbot-input');
+    const sendBtn     = document.getElementById('chatbot-send');
+    const badge       = document.getElementById('chatbot-badge');
+    const chips       = document.querySelectorAll('.quick-chip');
+
+    let isOpen    = false;
+    let isLoading = false;
+    let history   = []; // conversación para el API
+
+    // ─── ABRIR / CERRAR ──────────────────────────────────────
+    toggleBtn.addEventListener('click', () => {
+        isOpen = !isOpen;
+        window_.classList.toggle('open', isOpen);
+        if (isOpen) {
+            badge.style.display = 'none';
+            if (messagesDiv.children.length === 0) addWelcomeMessage();
+            setTimeout(() => inputEl.focus(), 400);
+        }
+    });
+    closeBtn.addEventListener('click', () => {
+        isOpen = false;
+        window_.classList.remove('open');
+    });
+
+    // ─── MENSAJE DE BIENVENIDA ───────────────────────────────
+    function addWelcomeMessage() {
+        addBotMessage("¡Hola! 👋 Soy **UntiBot**, el asistente IA de este portafolio.\n\nPuedo explicarte cualquier tema de BD2 (como las arquitecturas de la Semana 1 o el Modelo E-R de la Semana 2), navegar a una sección específica o responder tus dudas sobre SQL Server. ¿Por dónde empezamos? 🗄️");
+    }
+
+    // ─── AÑADIR MENSAJES AL CHAT ─────────────────────────────
+    function addBotMessage(text) {
+        const div = document.createElement('div');
+        div.className = 'chat-msg bot';
+        div.innerHTML = `
+            <div class="msg-avatar"><i class="fa-solid fa-robot"></i></div>
+            <div class="msg-bubble">${formatText(text)}</div>`;
+        messagesDiv.appendChild(div);
+        scrollBottom();
+    }
+
+    function addUserMessage(text) {
+        const div = document.createElement('div');
+        div.className = 'chat-msg user';
+        div.innerHTML = `
+            <div class="msg-bubble">${escapeHtml(text)}</div>
+            <div class="msg-avatar"><i class="fa-solid fa-user"></i></div>`;
+        messagesDiv.appendChild(div);
+        scrollBottom();
+    }
+
+    function addTyping() {
+        const div = document.createElement('div');
+        div.className = 'chat-msg bot';
+        div.id = 'chatbot-typing';
+        div.innerHTML = `
+            <div class="msg-avatar"><i class="fa-solid fa-robot"></i></div>
+            <div class="msg-bubble" style="padding:8px 14px;">
+                <div class="typing-indicator">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            </div>`;
+        messagesDiv.appendChild(div);
+        scrollBottom();
+    }
+
+    function removeTyping() {
+        const t = document.getElementById('chatbot-typing');
+        if (t) t.remove();
+    }
+
+    // ─── FORMATO DE TEXTO ────────────────────────────────────
+    function formatText(text) {
+        return escapeHtml(text)
+            .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\n/g, '<br>');
+    }
+    function escapeHtml(s) {
+        return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    function scrollBottom() {
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    // ─── DETECTAR SEMANA EN EL MENSAJE ──────────────────────
+    function detectarSemana(texto) {
+        const lower = texto.toLowerCase();
+        // "semana 10", "s10", "s-10", "week 10", "semana10"
+        const match = lower.match(/(?:semana\s*|s[-\s]?|week\s*)(\d{1,2})/);
+        if (match) {
+            const n = parseInt(match[1]);
+            if (n >= 1 && n <= 16) return n;
+        }
+        // "proyecto final" → semana 16
+        if (lower.includes('proyecto final') || lower.includes('final sustentatorio')) return 16;
+        // "examen parcial" → semana 8
+        if (lower.includes('examen parcial') || lower.includes('parciales')) return 8;
+        return null;
+    }
+
+    // ─── NAVEGAR A SEMANA ────────────────────────────────────
+    function navegarASemana(num) {
+        const card = document.querySelector(`.week-card[data-semana="${num}"]`);
+        if (card) {
+            setTimeout(() => {
+                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                // Efecto visual temporal
+                card.style.transition = 'box-shadow 0.4s, border-color 0.4s';
+                card.style.boxShadow = '0 0 30px rgba(0, 210, 255, 0.5)';
+                card.style.borderColor = '#00d2ff';
+                setTimeout(() => {
+                    card.style.boxShadow = '';
+                    card.style.borderColor = '';
+                }, 2500);
+            }, 400);
+        }
+    }
+
+    // ─── LLAMADA AL API DE GEMINI ─────────────────────────
+    async function llamarAPI(mensajeUsuario) {
+        history.push({ role: 'user', content: mensajeUsuario });
+
+        // Filtrar el historial para asegurar estricta alternancia entre 'user' y 'model'.
+        // Gemini rechaza (Error 400) si hay dos roles iguales seguidos.
+        let validHistory = [];
+        for (let i = 0; i < history.length; i++) {
+            let msgRole = history[i].role === 'assistant' ? 'model' : 'user';
+            
+            if (validHistory.length === 0) {
+                if (msgRole === 'user') {
+                    validHistory.push({ role: msgRole, parts: [{ text: history[i].content }] });
+                }
+            } else {
+                let lastMsg = validHistory[validHistory.length - 1];
+                if (lastMsg.role !== msgRole) {
+                    validHistory.push({ role: msgRole, parts: [{ text: history[i].content }] });
+                } else {
+                    // Si se envían 2 'user' seguidos, los unimos para evitar el error HTTP 400
+                    lastMsg.parts[0].text += "\n\n" + history[i].content;
+                }
+            }
+        }
+
+        // Inyectamos todo el PROMPT de forma invisible solo en el primer mensaje que se manda.
+        if (validHistory.length > 0 && validHistory[0].role === 'user') {
+            let systemText = "INSTRUCCIONES DE SISTEMA (Obligatorio cumplir):\n" + SYSTEM_PROMPT + "\n\n---\n\nMENSAJE DEL USUARIO:\n";
+            if (!validHistory[0].parts[0].text.startsWith("INSTRUCCIONES DE SISTEMA")) {
+                 validHistory[0].parts[0].text = systemText + validHistory[0].parts[0].text;
+            }
+        }
+
+        const apiKey = "AIzaSyAadZXXC69yzg03JEjaldnruseu9L9qaaU"; 
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+
+        const payload = {
+            contents: validHistory
+        };
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                const errText = await response.text();
+                // 🔴 IMPRIME EL ERROR REAL EN LA CONSOLA (F12) PARA DEBUGGEAR
+                console.error("❌ ERROR API GEMINI:", response.status, errText);
+                throw new Error("HTTP " + response.status + ": " + errText);
+            }
+
+            const data = await response.json();
+            const respuesta = data.candidates?.[0]?.content?.parts?.[0]?.text;
+            
+            if (!respuesta) throw new Error("Sin respuesta válida de Gemini.");
+
+            history.push({ role: 'assistant', content: respuesta });
+            if (history.length > 20) history = history.slice(-20); // Mantiene historial corto
+            
+            return respuesta;
+
+        } catch (error) {
+            console.error("❌ ERROR EN LLAMADA FETCH:", error);
+            // IMPORTANTE: Quitamos el mensaje que falló para que el siguiente intento no colapse la alternancia
+            history.pop(); 
+            throw error;
+        }
+    }
+
+    // ─── ENVIAR MENSAJE ──────────────────────────────────────
+    async function enviarMensaje(texto) {
+        texto = texto.trim();
+        if (!texto || isLoading) return;
+
+        isLoading = true;
+        sendBtn.disabled = true;
+        inputEl.value = '';
+        inputEl.style.height = 'auto';
+
+        addUserMessage(texto);
+
+        // Detectar navegación
+        const semana = detectarSemana(texto);
+        if (semana) navegarASemana(semana);
+
+        addTyping();
+
+        try {
+            const respuesta = await llamarAPI(texto);
+            removeTyping();
+            addBotMessage(respuesta);
+        } catch (err) {
+            removeTyping();
+            addBotMessage('Ups, hubo un problema técnico. ¿Podrías intentar enviar de nuevo tu mensaje? 🔄');
+        } finally {
+            isLoading = false;
+            sendBtn.disabled = false;
+            inputEl.focus();
+        }
+    }
+
+    // ─── EVENTOS ─────────────────────────────────────────────
+    sendBtn.addEventListener('click', () => enviarMensaje(inputEl.value));
+
+    inputEl.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            enviarMensaje(inputEl.value);
+        }
+    });
+
+    // Auto-resize textarea
+    inputEl.addEventListener('input', () => {
+        inputEl.style.height = 'auto';
+        inputEl.style.height = Math.min(inputEl.scrollHeight, 90) + 'px';
+    });
+
+    // Chips de acceso rápido
+    chips.forEach(chip => {
+        chip.addEventListener('click', () => {
+            enviarMensaje(chip.dataset.msg);
+        });
+    });
+
+})();
