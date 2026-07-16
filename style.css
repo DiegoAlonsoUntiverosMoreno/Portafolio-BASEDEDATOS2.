@@ -99,6 +99,8 @@ header ul a:hover{ color: #60a5fa; text-shadow: 0 0 10px rgba(96, 165, 250, 0.4)
     4. SECCIÓN SOBRE MÍ
 ========================================== */
 .info-section { display: flex; align-items: center; flex-direction: column; width: 90%; max-width: 1200px; margin: 80px auto; }
+
+.foto-perfil-mini { width: 140px; height: 140px; border-radius: 50%; object-fit: cover; margin: 15px 0 5px; border: 3px solid rgba(0,210,255,0.4); box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
 .section-title { font-size: clamp(28px, 4vw, 40px); font-weight: 900; text-align: center; margin-bottom: 40px; color: white; transition: 0.4s ease;}
 .info-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; width: 100%; }
 
